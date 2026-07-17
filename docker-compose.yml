@@ -58,7 +58,9 @@ services:
       SMTP_PASS: ${SMTP_PASS}
       SMTP_FROM: ${SMTP_FROM}
       TZ: ${TZ}
-    command: ["sh", "-c", "echo 'Backend placeholder — replace with JAR in Phase 1' && tail -f /dev/null"]
+    volumes:
+      - ./backend/target/fleetsense.jar:/app/fleetsense.jar:ro
+    command: ["java", "-jar", "/app/fleetsense.jar"]
     networks:
       - internal
 
