@@ -8,7 +8,7 @@
   <entry key='database.driver'>org.postgresql.Driver</entry>
   <entry key='database.url'>jdbc:postgresql://db:5432/fleetsense</entry>
   <entry key='database.user'>fleetsense</entry>
-  <entry key='database.password'>Vf9#mK2$pXqL8@nRwT4&amp;jYsE6!cZhBd3</entry>
+  <entry key='database.password'>Vf9NumK2pXqL8nRwT4jYsE6cZhBd3</entry>
 
   <!-- ── Web UI: internal only, never proxied ─────────────────────────── -->
   <entry key='web.port'>8082</entry>
