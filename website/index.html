@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vectoryn FleetSense — Enterprise Fleet Telematics</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#1A3A5C;--teal:#0D7377;--accent:#E84545;
+  --light:#E8F4F8;--dark:#0D1B2A;--mid:#2E5FA3;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--dark);color:#fff;overflow-x:hidden;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;width:100%;z-index:100;
+  background:rgba(13,19,26,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(13,115,119,.3);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5%;height:64px;}
+.nav-brand{display:flex;align-items:center;gap:12px;}
+.nav-logo{width:36px;height:36px;background:var(--teal);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;}
+.nav-name{font-weight:800;font-size:1.1rem;letter-spacing:.5px;}
+.nav-name span{color:var(--teal);}
+.nav-links{display:flex;gap:32px;list-style:none;}
+.nav-links a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.9rem;
+  transition:color .2s;}
+.nav-links a:hover{color:#fff;}
+.nav-cta{background:var(--teal);color:#fff;border:none;padding:9px 22px;
+  border-radius:6px;font-weight:600;font-size:.9rem;cursor:pointer;
+  text-decoration:none;transition:background .2s;}
+.nav-cta:hover{background:#0a5f63;}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;
+  padding:100px 5% 60px;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 60% 40%,rgba(13,115,119,.18) 0%,transparent 70%),
+             radial-gradient(ellipse 50% 40% at 10% 80%,rgba(46,95,163,.15) 0%,transparent 60%),
+             linear-gradient(180deg,#0D1B2A 0%,#0a1520 100%);}
+.hero-grid{position:absolute;inset:0;opacity:.04;
+  background-image:linear-gradient(rgba(13,115,119,1) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(13,115,119,1) 1px,transparent 1px);
+  background-size:60px 60px;}
+.hero-content{position:relative;max-width:620px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;
+  background:rgba(13,115,119,.15);border:1px solid rgba(13,115,119,.4);
+  padding:6px 16px;border-radius:20px;font-size:.8rem;color:var(--teal);
+  margin-bottom:28px;letter-spacing:.5px;}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--teal);
+  border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:900;line-height:1.1;
+  margin-bottom:20px;letter-spacing:-1px;}
+h1 span{color:var(--teal);}
+.hero-sub{font-size:1.1rem;color:rgba(255,255,255,.65);line-height:1.7;
+  margin-bottom:36px;max-width:520px;}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap;}
+.btn-primary{background:var(--teal);color:#fff;padding:14px 32px;
+  border-radius:8px;font-weight:700;font-size:1rem;text-decoration:none;
+  transition:all .2s;border:2px solid var(--teal);}
+.btn-primary:hover{background:#0a5f63;transform:translateY(-2px);}
+.btn-secondary{background:transparent;color:#fff;padding:14px 32px;
+  border-radius:8px;font-weight:600;font-size:1rem;text-decoration:none;
+  border:2px solid rgba(255,255,255,.25);transition:all .2s;}
+.btn-secondary:hover{border-color:rgba(255,255,255,.6);transform:translateY(-2px);}
+.hero-visual{position:absolute;right:5%;top:50%;transform:translateY(-50%);
+  width:42%;max-width:560px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;padding:20px;backdrop-filter:blur(8px);}
+.stat-card.accent{border-color:rgba(13,115,119,.4);background:rgba(13,115,119,.08);}
+.stat-num{font-size:2rem;font-weight:900;color:var(--teal);}
+.stat-label{font-size:.8rem;color:rgba(255,255,255,.5);margin-top:4px;}
+.stat-card.wide{grid-column:1/-1;display:flex;align-items:center;gap:16px;}
+.live-dot{width:10px;height:10px;background:#2ecc71;border-radius:50%;
+  animation:pulse 1.5s infinite;flex-shrink:0;}
+
+/* ── FEATURES ── */
+.section{padding:80px 5%;}
+.section-label{color:var(--teal);font-size:.8rem;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+.section-title{font-size:clamp(1.8rem,3vw,2.6rem);font-weight:800;
+  line-height:1.2;margin-bottom:16px;}
+.section-sub{color:rgba(255,255,255,.55);font-size:1rem;
+  max-width:560px;line-height:1.7;margin-bottom:48px;}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+.feat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;padding:28px;transition:all .3s;position:relative;overflow:hidden;}
+.feat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--teal),transparent);
+  opacity:0;transition:opacity .3s;}
+.feat:hover{border-color:rgba(13,115,119,.4);transform:translateY(-4px);}
+.feat:hover::before{opacity:1;}
+.feat-icon{width:48px;height:48px;background:rgba(13,115,119,.15);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;margin-bottom:16px;}
+.feat h3{font-size:1rem;font-weight:700;margin-bottom:8px;}
+.feat p{font-size:.875rem;color:rgba(255,255,255,.5);line-height:1.6;}
+.feat-tag{display:inline-block;margin-top:12px;padding:3px 10px;
+  background:rgba(13,115,119,.15);border-radius:20px;
+  font-size:.72rem;color:var(--teal);}
+
+/* ── HOW IT WORKS ── */
+.how{background:rgba(255,255,255,.02);border-top:1px solid rgba(255,255,255,.05);
+     border-bottom:1px solid rgba(255,255,255,.05);}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:0;counter-reset:step;}
+.step{padding:40px 32px;border-right:1px solid rgba(255,255,255,.06);
+  position:relative;}
+.step:last-child{border-right:none;}
+.step-num{font-size:3rem;font-weight:900;color:rgba(13,115,119,.2);
+  line-height:1;margin-bottom:12px;}
+.step h3{font-size:.95rem;font-weight:700;margin-bottom:8px;}
+.step p{font-size:.85rem;color:rgba(255,255,255,.45);line-height:1.6;}
+
+/* ── SUPPORTED HARDWARE ── */
+.hw-grid{display:flex;flex-wrap:wrap;gap:12px;}
+.hw-chip{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+  padding:8px 16px;border-radius:24px;font-size:.82rem;color:rgba(255,255,255,.7);}
+.hw-chip.active{border-color:rgba(13,115,119,.5);color:var(--teal);
+  background:rgba(13,115,119,.08);}
+
+/* ── PRICING / REGISTER ── */
+.pricing{background:linear-gradient(135deg,rgba(13,115,119,.1) 0%,rgba(26,58,92,.2) 100%);
+  border-radius:20px;padding:60px 5%;text-align:center;margin:0 5% 80px;
+  border:1px solid rgba(13,115,119,.2);}
+.pricing h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;margin-bottom:12px;}
+.pricing p{color:rgba(255,255,255,.55);margin-bottom:32px;font-size:1rem;}
+.register-form{display:flex;gap:12px;max-width:480px;margin:0 auto;flex-wrap:wrap;}
+.register-form input{flex:1;min-width:200px;padding:13px 18px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);
+  border-radius:8px;color:#fff;font-size:.95rem;outline:none;}
+.register-form input:focus{border-color:var(--teal);}
+.register-form input::placeholder{color:rgba(255,255,255,.3);}
+.register-form button{background:var(--teal);color:#fff;border:none;
+  padding:13px 28px;border-radius:8px;font-weight:700;font-size:.95rem;
+  cursor:pointer;transition:background .2s;white-space:nowrap;}
+.register-form button:hover{background:#0a5f63;}
+.trial-note{margin-top:16px;font-size:.8rem;color:rgba(255,255,255,.3);}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid rgba(255,255,255,.07);padding:40px 5%;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.footer-brand{font-weight:800;font-size:1rem;}
+.footer-brand span{color:var(--teal);}
+.footer-links{display:flex;gap:24px;}
+.footer-links a{color:rgba(255,255,255,.4);text-decoration:none;font-size:.85rem;}
+.footer-links a:hover{color:rgba(255,255,255,.8);}
+.footer-copy{color:rgba(255,255,255,.25);font-size:.8rem;}
+
+@media(max-width:768px){
+  .hero-visual{display:none;}
+  .hero-content{max-width:100%;}
+  nav .nav-links{display:none;}
+  .step{border-right:none;border-bottom:1px solid rgba(255,255,255,.06);}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">VF</div>
+    <div class="nav-name">Vectoryn <span>FleetSense</span></div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#hardware">Hardware</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#trial">Get Access</a></li>
+  </ul>
+  <a href="#trial" class="nav-cta">Request Trial</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🛰️ &nbsp;Real-Time Fleet Intelligence</div>
+    <h1>Know Your Fleet.<br/><span>Every Asset.</span><br/>Every Second.</h1>
+    <p class="hero-sub">Vectoryn FleetSense is an enterprise-grade telematics and operations platform supporting ICE and EV fleets — with live tracking, CAN/OBD analytics, fuel intelligence, driver scoring, and local AI built in.</p>
+    <div class="hero-actions">
+      <a href="#trial" class="btn-primary">Request Free Trial</a>
+      <a href="#features" class="btn-secondary">See Features →</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="stat-card accent">
+      <div class="stat-num">286</div>
+      <div class="stat-label">AVL Parameters Tracked</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">5K+</div>
+      <div class="stat-label">Assets Supported</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">&lt;5s</div>
+      <div class="stat-label">Live Position Update</div>
+    </div>
+    <div class="stat-card accent">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Data Ownership</div>
+    </div>
+    <div class="stat-card wide">
+      <div class="live-dot"></div>
+      <div>
+        <div style="font-size:.85rem;font-weight:600;">Platform Status</div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:2px;">All systems operational · EAT UTC+3</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-label">Platform Capabilities</div>
+  <div class="section-title">Everything Your Fleet Needs.<br/>Nothing You Don't.</div>
+  <p class="section-sub">Built to compete with GPS-Server, flespi, and Wialon — but owned outright, with no per-vehicle billing.</p>
+  <div class="features-grid">
+    <div class="feat">
+      <div class="feat-icon">🗺️</div>
+      <h3>Live Fleet Map</h3>
+      <p>Real-time positions with rotating arrows, 12-position trails, cluster mode for large fleets, and instant asset popups.</p>
+      <span class="feat-tag">OSM + Mapbox switchable</span>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📡</div>
+      <h3>Deep Telemetry Explorer</h3>
+      <p>Every raw AVL message, decoded. Filter by parameter, time range, or device. Live SSE stream for real-time inspection.</p>
+      <span class="feat-tag">flespi-class depth</span>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">⛽</div>
+      <h3>Fuel & Energy Intelligence</h3>
+      <p>Multi-witness fuel event arbitration eliminates false theft alarms. ICE consumption + EV charge sessions in one unified view.</p>
+      <span class="feat-tag">Evidence Engine AI</span>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🏎️</div>
+      <h3>Driver Behaviour Scoring</h3>
+      <p>Harsh braking, acceleration, cornering, speeding, and idle scoring per trip. Fleet percentile ranking and coaching flags.</p>
+      <span class="feat-tag">Wialon-class scoring</span>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🔧</div>
+      <h3>Predictive Maintenance</h3>
+      <p>AI-driven anomaly detection on CAN trends raises work orders before failures happen. DTC codes feed automatic alerts.</p>
+      <span class="feat-tag">Local AI — no cloud</span>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🔋</div>
+      <h3>Full EV Support</h3>
+      <p>SOC history, charge session log, range prediction, low-battery dispatch alerts. Manage mixed ICE + EV fleets in one platform.</p>
+      <span class="feat-tag">CAN/LVCAN EV params</span>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🛡️</div>
+      <h3>Full RBAC + Multi-Tenant</h3>
+      <p>Custom roles per client, per-asset-group scoping, API keys with rate limits. White-label client portal included.</p>
+      <span class="feat-tag">Enterprise-grade</span>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📊</div>
+      <h3>Reports & Alerts</h3>
+      <p>Custom alert rules on any of 286 AVL parameters. Scheduled reports by email in PDF, Excel, or CSV. Power BI ready.</p>
+      <span class="feat-tag">Any parameter, any threshold</span>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🌍</div>
+      <h3>Geofences & Routes</h3>
+      <p>Draw circle or polygon zones. Route adherence monitoring with deviation alerts. POI management and dwell time analytics.</p>
+      <span class="feat-tag">Unlimited zones</span>
+    </div>
+  </div>
+</section>
+
+<!-- HARDWARE -->
+<section class="section how" id="hardware">
+  <div class="section-label">Supported Hardware</div>
+  <div class="section-title">Works With Your Devices</div>
+  <p class="section-sub">Powered by Traccar 6.14 — supporting 200+ protocols and 2,000+ device models out of the box.</p>
+  <div class="hw-grid">
+    <span class="hw-chip active">Teltonika FMB140</span>
+    <span class="hw-chip active">Teltonika FMB920</span>
+    <span class="hw-chip active">Teltonika FMB003</span>
+    <span class="hw-chip active">Teltonika FMC003 (LTE)</span>
+    <span class="hw-chip active">Teltonika EYE Sensor (BLE)</span>
+    <span class="hw-chip active">CAN / J1939</span>
+    <span class="hw-chip active">OBD-II / OBD Dongle</span>
+    <span class="hw-chip active">RS232/485 LLS Probes</span>
+    <span class="hw-chip active">Dallas 1-Wire Temp</span>
+    <span class="hw-chip active">iButton / RFID</span>
+    <span class="hw-chip">Queclink GV Series</span>
+    <span class="hw-chip">Concox / JimiIoT</span>
+    <span class="hw-chip">Ruptela</span>
+    <span class="hw-chip">Sinotrack</span>
+    <span class="hw-chip">+ 2,000 more via Traccar</span>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how" style="padding-top:80px;">
+  <div class="section-label">How It Works</div>
+  <div class="section-title">Up and Running in Days</div>
+  <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;margin-top:32px;">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Install Tracker</h3>
+        <p>Fit a compatible GPS device to your vehicle or asset. Configure it to send data to your FleetSense server.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Register Asset</h3>
+        <p>Add the device in FleetSense — assign type, driver, group, and sensor calibration profile in minutes.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Go Live</h3>
+        <p>Your asset appears on the live map immediately. Alerts, trips, and fuel events start recording from first ping.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Gain Insight</h3>
+        <p>AI analytics surface anomalies, predict maintenance, and score drivers — all on your own infrastructure.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REGISTER / TRIAL -->
+<div id="trial">
+  <div class="pricing">
+    <h2>Request Your Free Trial</h2>
+    <p>Try Vectoryn FleetSense free for 30 days. No credit card. Full platform access.<br/>
+    Our team will set up your account and onboard your first assets.</p>
+    <div class="register-form">
+      <input type="email" placeholder="Work email address"/>
+      <button onclick="handleTrial()">Get Access →</button>
+    </div>
+    <p class="trial-note">After submitting, you'll receive login credentials to the live platform within 24 hours.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Vectoryn <span>FleetSense</span></div>
+  <div class="footer-links">
+    <a href="#features">Features</a>
+    <a href="#hardware">Hardware</a>
+    <a href="#trial">Trial</a>
+    <a href="mailto:info@vectoryndynamics.com">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 Vectoryn Dynamics Limited. All rights reserved.</div>
+</footer>
+
+<script>
+function handleTrial(){
+  const input = document.querySelector('.register-form input');
+  const email = input.value.trim();
+  if(!email || !email.includes('@')){
+    input.style.borderColor='#E84545';
+    input.placeholder='Please enter a valid email';
+    return;
+  }
+  input.style.borderColor='#2ecc71';
+  const btn = document.querySelector('.register-form button');
+  btn.textContent = '✓ Request Sent!';
+  btn.style.background = '#2ecc71';
+  btn.disabled = true;
+  // TODO: wire to /api/v1/trial/register when backend is live
+  console.log('Trial request:', email);
+}
+</script>
+</body>
+</html>

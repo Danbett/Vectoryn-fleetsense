@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!DOCTYPE properties SYSTEM 'http://java.sun.com/dtd/properties.dtd'>
+
+<properties>
+
+  <!-- ── Database: shared PostgreSQL ─────────────────────────────────── -->
+  <entry key='database.driver'>org.postgresql.Driver</entry>
+  <entry key='database.url'>jdbc:postgresql://db:5432/fleetsense</entry>
+  <entry key='database.user'>fleetsense</entry>
+  <entry key='database.password'>Vf9#mK2$pXqL8@nRwT4&amp;jYsE6!cZhBd3</entry>
+
+  <!-- ── Web UI: internal only, never proxied ─────────────────────────── -->
+  <entry key='web.port'>8082</entry>
+  <entry key='web.origin'>*</entry>
+
+  <!-- ── Forward every decoded position to Spring Boot ───────────────── -->
+  <entry key='forward.enable'>true</entry>
+  <entry key='forward.url'>http://backend:8080/api/v1/ingest/push</entry>
+  <entry key='forward.json'>true</entry>
+
+  <!-- ── Protocols: Teltonika primary + keep all others available ─────── -->
+  <entry key='teltonika.port'>5027</entry>
+
+  <!-- ── Performance (Traccar 6.14 batching) ──────────────────────────── -->
+  <entry key='database.positionsHistory'>false</entry>
+  <entry key='filter.enable'>false</entry>
+
+</properties>

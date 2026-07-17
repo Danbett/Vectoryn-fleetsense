@@ -1,0 +1,102 @@
+services:
+
+  # ── TimescaleDB ─────────────────────────────────────────────────────────────
+  db:
+    image: timescale/timescaledb:latest-pg15
+    container_name: fleetsense-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./schema:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal
+
+  # ── Traccar 6.14.5 ──────────────────────────────────────────────────────────
+  traccar:
+    image: ${TRACCAR_IMAGE}
+    container_name: fleetsense-traccar
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5027:5027"      # Teltonika Codec 8/8E — published to host
+      - "5027:5027/udp"  # UDP fallback
+    volumes:
+      - ./traccar/conf/traccar.xml:/opt/traccar/conf/traccar.xml:ro
+      - traccar_logs:/opt/traccar/logs
+    networks:
+      - internal
+    # 8082 is NOT published — Traccar web UI stays internal forever
+
+  # ── Spring Boot Backend (placeholder until we build it) ─────────────────────
+  backend:
+    image: eclipse-temurin:21-jre-alpine
+    container_name: fleetsense-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      SESSION_SECRET: ${SESSION_SECRET}
+      API_KEY_SALT: ${API_KEY_SALT}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_FROM: ${SMTP_FROM}
+      TZ: ${TZ}
+    command: ["sh", "-c", "echo 'Backend placeholder — replace with JAR in Phase 1' && tail -f /dev/null"]
+    networks:
+      - internal
+
+  # ── AI Worker (placeholder) ──────────────────────────────────────────────────
+  ai-worker:
+    image: python:3.12-slim
+    container_name: fleetsense-ai
+    restart: unless-stopped
+    depends_on:
+      - db
+    command: ["sh", "-c", "echo 'AI worker placeholder — Phase 4' && tail -f /dev/null"]
+    networks:
+      - internal
+
+  # ── NGINX reverse proxy + static website ────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: fleetsense-nginx
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./website:/usr/share/nginx/website:ro
+      - ./dashboard/dist:/usr/share/nginx/app:ro
+    networks:
+      - internal
+      - external
+
+volumes:
+  db_data:
+  traccar_logs:
+
+networks:
+  internal:
+    driver: bridge
+  external:
+    driver: bridge
