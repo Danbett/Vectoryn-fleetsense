@@ -1,6 +1,7 @@
 /opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/FleetSenseApplication.java
 /opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/auth/AuthService.java
 /opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/config/WebConfig.java
+/opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/controller/AlertsController.java
 /opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/controller/FleetController.java
 /opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/controller/IngestController.java
 /opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/controller/TelemetryController.java
