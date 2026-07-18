@@ -6,4 +6,5 @@ com/vectoryn/fleetsense/model/SecurityContext.class
 com/vectoryn/fleetsense/controller/FleetController.class
 com/vectoryn/fleetsense/controller/AlertsController.class
 com/vectoryn/fleetsense/controller/TelemetryController.class
+com/vectoryn/fleetsense/controller/TripsController.class
 com/vectoryn/fleetsense/controller/UsersRolesController.class

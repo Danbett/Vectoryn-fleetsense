@@ -5,5 +5,6 @@
 /opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/controller/FleetController.java
 /opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/controller/IngestController.java
 /opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/controller/TelemetryController.java
+/opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/controller/TripsController.java
 /opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/controller/UsersRolesController.java
 /opt/fleetsense/backend/src/main/java/com/vectoryn/fleetsense/model/SecurityContext.java
