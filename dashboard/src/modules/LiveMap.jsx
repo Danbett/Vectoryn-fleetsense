@@ -1,3 +1,4 @@
+import BottomPanel from './BottomPanel.jsx';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { apiFetch } from '../api.js';
 
@@ -79,8 +80,7 @@ function Sparkline({ data, color, height=80, width=280 }) {
     React.createElement("polyline",{points:pts,fill:"none",stroke:color,strokeWidth:1.5})
   );
 }
-
-function BottomPanel({ dev, onClose, follow, onFollow }) {
+) {
   const [tab,setTab]=useState("data");
   const [history,setHistory]=useState([]);
   const [loading,setLoading]=useState(false);
