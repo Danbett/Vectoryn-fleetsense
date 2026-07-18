@@ -68,18 +68,6 @@ function DeviceRow({ dev, isSelected, onClick, isFollowing }) {
   );
 }
 
-function Sparkline({ data, color, height=80, width=280 }) {
-  if (!data||data.length<2) return React.createElement("span",{style:{color:"rgba(255,255,255,.2)",fontSize:11}},"No data");
-  const max=Math.max(...data,1);
-  const pts=data.map((v,i)=>((i/(data.length-1))*width)+","+(height-(v/max)*height)).join(" ");
-  return React.createElement("svg",{width,height,viewBox:"0 0 "+width+" "+height,style:{display:"block"}},
-    React.createElement("defs",null,React.createElement("linearGradient",{id:"sg"+color.replace("#",""),x1:0,y1:0,x2:0,y2:1},
-      React.createElement("stop",{offset:"0%",stopColor:color,stopOpacity:.3}),
-      React.createElement("stop",{offset:"100%",stopColor:color,stopOpacity:0}))),
-    React.createElement("polygon",{points:"0,"+height+" "+pts+" "+width+","+height,fill:"url(#sg"+color.replace("#","")+")" }),
-    React.createElement("polyline",{points:pts,fill:"none",stroke:color,strokeWidth:1.5})
-  );
-}
 ) {
   const [tab,setTab]=useState("data");
   const [history,setHistory]=useState([]);
