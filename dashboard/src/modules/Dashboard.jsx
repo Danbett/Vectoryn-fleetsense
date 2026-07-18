@@ -20,7 +20,7 @@ export default function Dashboard({onNavigate}){
     ]).then(([s,a])=>{setStats(s?.data);setAlerts(a?.data||[]);setLoading(false);}).catch(()=>setLoading(false));
   },[]);
   const online=stats?.online??0, total=stats?.total??0, pct=total>0?Math.round(online/total*100):0;
-  return(<div style={{padding:32,overflowY:'auto',height:'100%'}}>
+  return(<div style={{padding:32,overflowY:'auto',height:'100%',width:'100%',boxSizing:'border-box'}}>
     <div style={{marginBottom:28}}>
       <div style={{fontSize:11,color:'#0D7377',fontWeight:700,letterSpacing:2,textTransform:'uppercase',marginBottom:6}}>Overview</div>
       <h1 style={{fontSize:26,fontWeight:800}}>Fleet Dashboard</h1>
