@@ -38,7 +38,7 @@ export default function TelemetryExplorer(){
   async function fetchMessages(){
     if(!selDevice)return;
     setLoading(true);
-    const r=await apiFetch(`/telemetry/device/${selDevice.id}/raw?hours=${hours}`).catch(()=>null);
+    const r=await apiFetch(`/telemetry/device/${selDevice.id}/history?hours=${hours}`).catch(()=>null);
     setMessages(r?.data||[]); setLoading(false);
   }
 

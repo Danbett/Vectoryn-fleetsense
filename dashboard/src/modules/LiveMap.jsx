@@ -40,8 +40,19 @@ export default function LiveMap(){
         if(!dev.latitude||!dev.longitude)return;
         const lat=+dev.latitude,lon=+dev.longitude,speed=+dev.speed||0,course=+dev.course||0;
         const attrs=dev.attributes||{},isEV=dev.powertrain==='ev'||attrs.io113!==undefined;
-        const isOnline=dev.connectivity==='online',isMoving=isOnline&&speed>2;
-        const color=isEV?'#8B5CF6':(isOnline?(isMoving?'#2ecc71':'#F59E0B'):'#E84545');
+        const isOnline=(dev.connectivity||'').trim()==='online';
+        const isMoving=isOnline&&speed>2;
+        // 5-state color logic per spec:
+        // moving=green, stopped(online)=yellow, no comms 5-30min=orange, 30-60min=dark orange, 60min+=red
+        const lastUp=dev.fixtime?new Date(dev.fixtime):null;
+        const minsAgo=lastUp?(Date.now()-lastUp.getTime())/60000:9999;
+        let color;
+        if(isEV&&isOnline) color='#8B5CF6';          // EV online = purple
+        else if(isMoving) color='#2ecc71';             // moving = green
+        else if(isOnline) color='#F59E0B';             // online stopped = yellow
+        else if(minsAgo<30) color='#F97316';           // no comms < 30min = orange
+        else if(minsAgo<60) color='#EA580C';           // no comms 30-60min = dark orange
+        else color='#E84545';                          // no comms > 60min = red
         if(!hist.current[dev.id])hist.current[dev.id]=[];
         const h=hist.current[dev.id];
         if(h.length===0||h[h.length-1][0]!==lat||h[h.length-1][1]!==lon){h.push([lat,lon]);if(h.length>12)h.shift();}
@@ -70,7 +81,7 @@ export default function LiveMap(){
     <div style={{position:'absolute',bottom:20,left:12,zIndex:1000,background:'rgba(13,27,42,.92)',backdropFilter:'blur(8px)',border:'1px solid rgba(255,255,255,.1)',borderRadius:10,padding:10,minWidth:200}}>
       <div style={{fontSize:11,color:'rgba(255,255,255,.4)',marginBottom:8,fontWeight:700,letterSpacing:1,textTransform:'uppercase'}}>Assets</div>
       {devices.map(d=>{
-        const online=d.connectivity==='online',ev=d.powertrain==='ev'||(d.attributes?.io113!==undefined);
+        const online=(d.connectivity||'').trim()==='online',ev=d.powertrain==='ev'||(d.attributes?.io113!==undefined);
         const color=ev?'#8B5CF6':(online?'#2ecc71':'#E84545');
         return(<div key={d.id} onClick={()=>{setSel(d);if(d.latitude&&mapInst.current)mapInst.current.setView([+d.latitude,+d.longitude],16);}}
           style={{display:'flex',alignItems:'center',gap:8,padding:'6px 4px',cursor:'pointer',borderRadius:6}}>
@@ -95,7 +106,7 @@ export default function LiveMap(){
         <button onClick={()=>setSel(null)} style={{background:'none',border:'none',color:'rgba(255,255,255,.4)',cursor:'pointer',fontSize:18}}>×</button>
       </div>
       <div style={{display:'flex',gap:8,marginBottom:14,flexWrap:'wrap'}}>
-        {[{label:sel.connectivity,color:sel.connectivity==='online'?'#2ecc71':'#E84545'},{label:sel.map_status,color:'#F59E0B'},...(sel.powertrain==='ev'?[{label:'EV',color:'#8B5CF6'}]:[])].map(b=>(<span key={b.label} style={{fontSize:10,padding:'3px 10px',borderRadius:20,background:`${b.color}22`,color:b.color,fontWeight:700,textTransform:'uppercase'}}>{b.label}</span>))}
+        {[{label:sel.connectivity,color:(sel.connectivity||'').trim()==='online'?'#2ecc71':'#E84545'},{label:sel.map_status,color:'#F59E0B'},...(sel.powertrain==='ev'?[{label:'EV',color:'#8B5CF6'}]:[])].map(b=>(<span key={b.label} style={{fontSize:10,padding:'3px 10px',borderRadius:20,background:`${b.color}22`,color:b.color,fontWeight:700,textTransform:'uppercase'}}>{b.label}</span>))}
       </div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:14}}>
         {[{label:'Speed',value:`${parseFloat(sel.speed||0).toFixed(0)} km/h`},{label:'Course',value:`${sel.course||0}°`},{label:'Latitude',value:sel.latitude?parseFloat(sel.latitude).toFixed(5):'N/A'},{label:'Longitude',value:sel.longitude?parseFloat(sel.longitude).toFixed(5):'N/A'},{label:'Satellites',value:attrs.sat??'N/A'},{label:'Signal',value:attrs.rssi!==undefined?`${attrs.rssi} dBm`:'N/A'},{label:'Power',value:attrs.power?`${attrs.power}V`:'N/A'},{label:'Battery',value:attrs.battery?`${attrs.battery}V`:'N/A'}].map(r=>(<div key={r.label} style={{background:'rgba(255,255,255,.04)',borderRadius:8,padding:'8px 10px'}}><div style={{fontSize:10,color:'rgba(255,255,255,.35)',marginBottom:2}}>{r.label}</div><div style={{fontSize:13,fontWeight:600}}>{r.value}</div></div>))}

@@ -36,11 +36,12 @@ public class TelemetryController {
             "d.status AS device_status, " +
             "p.latitude, p.longitude, p.course, p.speed, p.altitude, " +
             "p.fixtime, p.servertime, p.attributes, p.address, " +
-            "CASE WHEN d.lastupdate > NOW() - INTERVAL '5 minutes' " +
+            "CASE WHEN d.lastupdate::timestamptz > NOW() - INTERVAL '5 minutes' " +
             "  THEN 'online' ELSE 'offline' END AS connectivity, " +
             "CASE " +
-            "  WHEN d.lastupdate > NOW() - INTERVAL '5 minutes' AND COALESCE(p.speed,0) > 2 THEN 'moving' " +
-            "  WHEN d.lastupdate > NOW() - INTERVAL '5 minutes' THEN 'idle' " +
+            "  WHEN d.lastupdate::timestamptz > NOW() - INTERVAL '5 minutes' " +
+            "    AND COALESCE(p.speed,0) > 2 THEN 'moving' " +
+            "  WHEN d.lastupdate::timestamptz > NOW() - INTERVAL '5 minutes' THEN 'idle' " +
             "  ELSE 'offline' END AS map_status " +
             "FROM tc_devices d " + groupJoin +
             "LEFT JOIN tc_positions p ON p.id = d.positionid " +
@@ -71,10 +72,13 @@ public class TelemetryController {
         if (ctx == null) return ResponseEntity.status(401).build();
         var row = db.queryForMap(
             "SELECT " +
-            "COUNT(*) as total, " +
-            "COUNT(*) FILTER (WHERE lastupdate > NOW() - INTERVAL '5 minutes') as online, " +
-            "COUNT(*) FILTER (WHERE lastupdate > NOW() - INTERVAL '5 minutes' AND positionid IS NOT NULL) as active " +
-            "FROM tc_devices WHERE tenant_id = ?::uuid", ctx.tenantId);
+            "  COUNT(*) as total, " +
+            "  SUM(CASE WHEN lastupdate::timestamptz > NOW() - INTERVAL '5 minutes' " +
+            "    THEN 1 ELSE 0 END) as online, " +
+            "  SUM(CASE WHEN lastupdate::timestamptz > NOW() - INTERVAL '5 minutes' " +
+            "    AND positionid IS NOT NULL THEN 1 ELSE 0 END) as active " +
+            "FROM tc_devices WHERE tenant_id = ?::uuid",
+            ctx.tenantId);
         return ResponseEntity.ok(Map.of("data", row));
     }
 
@@ -92,16 +96,23 @@ public class TelemetryController {
             id, ctx.tenantId);
         if (check.isEmpty()) return ResponseEntity.status(404).build();
 
-        String timeCond = before > 0
-            ? "AND fixtime < to_timestamp(?/1000.0)"
-            : "AND fixtime > NOW() - (? * INTERVAL '1 hour')";
-        Object timeParam = before > 0 ? before : hours;
-
-        var positions = db.queryForList(
-            "SELECT id, latitude, longitude, course, speed, fixtime, attributes " +
-            "FROM tc_positions WHERE deviceid = ? " + timeCond +
-            " ORDER BY fixtime ASC LIMIT 10000",
-            id, timeParam);
+        List<Map<String, Object>> positions;
+        if (before > 0) {
+            positions = db.queryForList(
+                "SELECT id, latitude, longitude, course, speed, fixtime, attributes " +
+                "FROM tc_positions WHERE deviceid = ? " +
+                "AND fixtime < to_timestamp(?/1000.0) " +
+                "ORDER BY fixtime ASC LIMIT 10000",
+                id, before);
+        } else {
+            int h = Math.max(1, Math.min(hours, 720));
+            positions = db.queryForList(
+                "SELECT id, latitude, longitude, course, speed, fixtime, attributes " +
+                "FROM tc_positions WHERE deviceid = ? " +
+                "AND fixtime > NOW() - INTERVAL '" + h + " hours' " +
+                "ORDER BY fixtime ASC LIMIT 10000",
+                id);
+        }
         return ResponseEntity.ok(Map.of("data", positions, "count", positions.size()));
     }
 
@@ -113,14 +124,15 @@ public class TelemetryController {
         if (ctx == null) return ResponseEntity.status(401).build();
         if (!ctx.canView("explorer")) return ResponseEntity.status(403).build();
 
+        int h = Math.max(1, Math.min(hours, 720));
         var positions = db.queryForList(
             "SELECT p.id, p.fixtime, p.servertime, p.latitude, p.longitude, " +
             "p.speed, p.course, p.altitude, p.attributes " +
             "FROM tc_positions p JOIN tc_devices d ON d.id = p.deviceid " +
             "WHERE p.deviceid = ? AND d.tenant_id = ?::uuid " +
-            "AND p.fixtime > NOW() - (? * INTERVAL '1 hour') " +
+            "AND p.fixtime > NOW() - INTERVAL '" + h + " hours' " +
             "ORDER BY p.fixtime DESC LIMIT 2000",
-            id, ctx.tenantId, hours);
+            id, ctx.tenantId);
         return ResponseEntity.ok(Map.of("data", positions, "count", positions.size()));
     }
 }

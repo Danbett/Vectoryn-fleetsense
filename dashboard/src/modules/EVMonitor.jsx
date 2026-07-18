@@ -12,7 +12,7 @@ export default function EVMonitor(){
       setDevices(evDevs);
       // Load history for first EV device
       if(evDevs.length>0){
-        apiFetch(`/telemetry/device/${evDevs[0].id}/raw?hours=24`).then(r2=>{
+        apiFetch(`/telemetry/device/${evDevs[0].id}/history?hours=24`).then(r2=>{
           setHistory(r2?.data||[]); setLoading(false);
         }).catch(()=>setLoading(false));
       } else setLoading(false);
