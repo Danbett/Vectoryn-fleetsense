@@ -73,7 +73,7 @@ function DeviceTab({selDevice,deviceHist}){
   </div>);
 }
 
-function OverviewTab({summary,days}){
+function OverviewTab({summary,days,liveData}){
   const totalKm=summary.reduce((a,d)=>a+(+d.distance_km||0),0);
   const totalEngH=summary.reduce((a,d)=>a+(+d.engine_hours||0),0);
   const evCount=summary.filter(d=>d.powertrain==='ev').length;
@@ -90,7 +90,7 @@ function OverviewTab({summary,days}){
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:14}}>
       {summary.map(function(dev){
         const isEV=dev.powertrain==='ev';
-        const pct=isEV?(+(dev.battery_pct||0)):0;
+        const live=liveData.find(l=>l.id===dev.id);const attrs=live?.attributes||{};const pct=isEV?(+(attrs.io113||0)):0;
         const color=isEV?(pct>50?'#A78BFA':pct>20?'#EAB308':'#EF4444'):'#2E5FA3';
         return(<div key={dev.id} style={{background:'rgba(255,255,255,.03)',border:'1px solid rgba(255,255,255,.07)',borderRadius:12,padding:16}}>
           <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
@@ -149,15 +149,18 @@ export default function FuelEnergy(){
   const [days,setDays]=useState(7);
   const [loading,setLoading]=useState(true);
   const [tab,setTab]=useState('overview');
+  const [liveDevices,setLiveDevices]=useState([]);
 
   useEffect(()=>{
     setLoading(true);
     Promise.all([
       apiFetch('/fuel/summary?days='+days),
-      apiFetch('/fuel/events?days='+days)
+      apiFetch('/fuel/events?days='+days),
+      apiFetch('/telemetry/live')
     ]).then(function(res){
       setSummary(res[0]?.data||[]);
       setEvents(res[1]?.data||[]);
+      setLiveDevices(res[2]?.data||[]);
       setLoading(false);
     }).catch(()=>setLoading(false));
   },[days]);
@@ -171,7 +174,7 @@ export default function FuelEnergy(){
 
   function renderContent(){
     if(loading)return <div style={{color:'rgba(255,255,255,.3)',padding:20}}>Loading...</div>;
-    if(tab==='overview')return <OverviewTab summary={summary} days={days}/>;
+    if(tab==='overview')return <OverviewTab summary={summary} days={days} liveData={liveDevices}/>;
     if(tab==='events')return <EventsTab events={events} days={days}/>;
     if(tab==='device')return <DeviceTab selDevice={selDevice} deviceHist={deviceHist}/>;
     return null;
