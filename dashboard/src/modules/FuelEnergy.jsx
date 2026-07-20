@@ -4,13 +4,16 @@ import { apiFetch } from '../api.js';
 function parseA(raw){if(!raw)return{};if(typeof raw==='object')return raw;try{return JSON.parse(raw);}catch{return{};}}
 
 function TankGauge({pct=0,color='#22C55E',label='',size=80}){
+  const v=Math.max(0,Math.min(100,+pct||0));
   const r=size/2-8,cx=size/2,cy=size/2;
-  const arc=(s,e)=>{const rd=d=>(d-90)*Math.PI/180;const x1=cx+r*Math.cos(rd(s)),y1=cy+r*Math.sin(rd(s)),x2=cx+r*Math.cos(rd(e)),y2=cy+r*Math.sin(rd(e)),lg=e-s>180?1:0;return `M ${x1} ${y1} A ${r} ${r} 0 ${lg} 1 ${x2} ${y2}`;};
-  const end=-135+Math.min(pct,100)/100*270;
-  return(<svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+  function polarXY(deg,radius){const rad=(deg-90)*Math.PI/180;return[cx+radius*Math.cos(rad),cy+radius*Math.sin(rad)];}
+  function arc(s,e){const[x1,y1]=polarXY(s,r),[x2,y2]=polarXY(e,r),lg=e-s>180?1:0;return 'M '+x1+' '+y1+' A '+r+' '+r+' 0 '+lg+' 1 '+x2+' '+y2;}
+  const end=-135+v/100*270;
+  const vb='0 0 '+size+' '+size;
+  return(<svg width={size} height={size} viewBox={vb}>
     <path d={arc(-135,135)} fill="none" stroke="rgba(255,255,255,.08)" strokeWidth={8} strokeLinecap="round"/>
-    {pct>0&&<path d={arc(-135,end)} fill="none" stroke={color} strokeWidth={8} strokeLinecap="round" style={{transition:'all .8s'}}/>}
-    <text x={cx} y={cy+5} textAnchor="middle" fontSize={size/5} fontWeight={800} fill={color}>{Math.round(pct)}%</text>
+    {v>0&&<path d={arc(-135,end)} fill="none" stroke={color} strokeWidth={8} strokeLinecap="round" style={{transition:'all .8s'}}/>}
+    <text x={cx} y={cy+5} textAnchor="middle" fontSize={size/5} fontWeight={800} fill={color}>{Math.round(v)}%</text>
     <text x={cx} y={cy+size/4} textAnchor="middle" fontSize={size/8} fill="rgba(255,255,255,.3)">{label}</text>
   </svg>);
 }
