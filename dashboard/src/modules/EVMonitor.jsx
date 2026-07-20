@@ -8,7 +8,7 @@ export default function EVMonitor(){
 
   useEffect(()=>{
     apiFetch('/telemetry/live').then(r=>{
-      const evDevs=(r?.data||[]).filter(d=>d.powertrain==='ev'||(d.attributes?.io113!==undefined));
+      const evDevs=(r?.data||[]).filter(d=>d.powertrain==='ev');
       setDevices(evDevs);
       // Load history for first EV device
       if(evDevs.length>0){
