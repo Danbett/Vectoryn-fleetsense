@@ -153,16 +153,16 @@ export default function FuelEnergy(){
 
   useEffect(()=>{
     setLoading(true);
-    Promise.all([
-      apiFetch('/fuel/summary?days='+days),
-      apiFetch('/fuel/events?days='+days),
-      apiFetch('/telemetry/live')
-    ]).then(function(res){
-      setSummary(res[0]?.data||[]);
-      setEvents(res[1]?.data||[]);
-      setLiveDevices(res[2]?.data||[]);
-      setLoading(false);
-    }).catch(()=>setLoading(false));
+    apiFetch('/fuel/summary?days='+days)
+      .then(r=>setSummary(r?.data||[]))
+      .catch(()=>setSummary([]));
+    apiFetch('/fuel/events?days='+days)
+      .then(r=>setEvents(r?.data||[]))
+      .catch(()=>setEvents([]));
+    apiFetch('/telemetry/live')
+      .then(r=>setLiveDevices(r?.data||[]))
+      .catch(()=>setLiveDevices([]));
+    setLoading(false);
   },[days]);
 
   useEffect(()=>{
