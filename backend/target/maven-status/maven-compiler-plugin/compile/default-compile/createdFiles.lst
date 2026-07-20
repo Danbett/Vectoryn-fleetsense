@@ -1,10 +1,14 @@
 com/vectoryn/fleetsense/FleetSenseApplication.class
-com/vectoryn/fleetsense/config/WebConfig.class
+com/vectoryn/fleetsense/controller/ReportsController.class
 com/vectoryn/fleetsense/controller/IngestController.class
-com/vectoryn/fleetsense/auth/AuthService.class
+com/vectoryn/fleetsense/controller/DriversController.class
 com/vectoryn/fleetsense/model/SecurityContext.class
 com/vectoryn/fleetsense/controller/FleetController.class
 com/vectoryn/fleetsense/controller/AlertsController.class
 com/vectoryn/fleetsense/controller/TelemetryController.class
-com/vectoryn/fleetsense/controller/TripsController.class
 com/vectoryn/fleetsense/controller/UsersRolesController.class
+com/vectoryn/fleetsense/controller/FuelController.class
+com/vectoryn/fleetsense/config/WebConfig.class
+com/vectoryn/fleetsense/auth/AuthService.class
+com/vectoryn/fleetsense/controller/GeofencesController.class
+com/vectoryn/fleetsense/controller/TripsController.class

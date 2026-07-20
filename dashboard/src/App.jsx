@@ -9,16 +9,24 @@ import FleetRegistry from './modules/FleetRegistry.jsx';
 import AlertsModule from './modules/AlertsModule.jsx';
 import EVMonitor from './modules/EVMonitor.jsx';
 import TelemetryExplorer from './modules/TelemetryExplorer.jsx';
+import FuelEnergy from './modules/FuelEnergy.jsx';
+import DriversModule from './modules/DriversModule.jsx';
+import GeofencesModule from './modules/GeofencesModule.jsx';
+import ReportsModule from './modules/ReportsModule.jsx';
 import Placeholder from './modules/Placeholder.jsx';
 
 function renderModule(key, onNavigate) {
-  if (key === 'dashboard')  return <Dashboard onNavigate={onNavigate}/>;
-  if (key === 'ops.map')    return <LiveMap/>;
-  if (key === 'ops.trips')  return <Trips/>;
-  if (key === 'fleet')      return <FleetRegistry/>;
-  if (key === 'alerts')     return <AlertsModule/>;
-  if (key === 'ev')         return <EVMonitor/>;
-  if (key === 'explorer')   return <TelemetryExplorer/>;
+  if (key === 'dashboard')   return <Dashboard onNavigate={onNavigate}/>;
+  if (key === 'ops.map')     return <LiveMap/>;
+  if (key === 'ops.trips')   return <Trips/>;
+  if (key === 'ops.geo')     return <GeofencesModule/>;
+  if (key === 'fleet')       return <FleetRegistry/>;
+  if (key === 'alerts')      return <AlertsModule/>;
+  if (key === 'fuel')        return <FuelEnergy/>;
+  if (key === 'ev')          return <EVMonitor/>;
+  if (key === 'drivers')     return <DriversModule/>;
+  if (key === 'explorer')    return <TelemetryExplorer/>;
+  if (key === 'reports')     return <ReportsModule/>;
   return <Placeholder moduleKey={key}/>;
 }
 
@@ -32,7 +40,7 @@ export default function App() {
 
   if (!session) return <Login onLogin={handleLogin}/>;
 
-  const fullScreen = ['ops.map','ops.trips','explorer'].includes(activeModule);
+  const fullScreen = ['ops.map','ops.trips','explorer','ops.geo'].includes(activeModule);
 
   return (
     <div style={{ display:'flex', height:'100vh', width:'100vw', background:'#0D1B2A', overflow:'hidden' }}>
@@ -55,7 +63,8 @@ export default function App() {
             </div>
           </div>
         )}
-        <div style={{ flex:1, overflow: fullScreen ? 'hidden' : 'auto', width:'100%', boxSizing:'border-box', scrollbarGutter:'stable' }}>
+        <div style={{ flex:1, overflow: fullScreen ? 'hidden' : 'auto', width:'100%',
+          boxSizing:'border-box', scrollbarGutter:'stable' }}>
           {renderModule(activeModule, setActiveModule)}
         </div>
       </div>
